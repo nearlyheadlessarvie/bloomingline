@@ -181,7 +181,7 @@ function inv_block_custom_form_block_form_alter(&$form, \Drupal\Core\Form\FormSt
       '#type' => 'select',
       '#title' => t('Mute'),
       '#default_value' => $block->getThirdPartySetting('inv_block_custom','background_video_mute'),
-      '#options' => array('0'=>'No',1=>'Yes'),
+      '#options' => array(0=>'No',1=>'Yes'),
       '#states' => array(
           'visible' => array(
               ':input[name="background_settings[background_type]"]' => array('value' => 3),
@@ -217,16 +217,19 @@ function inv_block_custom_form_block_form_alter(&$form, \Drupal\Core\Form\FormSt
       '#title' => t('Margin'),
       '#default_value' => $block->getThirdPartySetting('inv_block_custom','block_margin'),
     );
-    $form['bootstrap_settings']['hidden_devices'] = array(
+
+    $form['bootstrap_settings']['responsive'] = array(
       '#type' => 'checkboxes',
       '#title' => 'Responsive settings',
       '#options' => array(
-          'hidden-xs' => 'Hidden on Extra Small Device',
-          'hidden-sm' => 'Hidden on Small Device',
-          'hidden-md' => 'Hidden on Medium Device',
-          'hidden-ld' => 'Hidden on Large Device',
+          'hphone' => 'Hidden on Phone',
+          'vphone' => 'Visible on Phone',
+          'htablet' => 'Hidden on Tablet',
+          'vtablet' => 'Visible on Tablet',
+          'hdesktop' => 'Hidden on Desktop',
+          'vdesktop' => 'Visible on Desktop'
       ),
-    //  '#default_value' => array('hidden-xs','hidden-sm' ),
+      '#default_value' => (array)$block->getThirdPartySetting('inv_block_custom', 'responsive'),
     );
     $form['#entity_builders'][] = 'inv_block_custom_submit';
   }
@@ -337,6 +340,13 @@ function inv_block_custom_submit($entity_type, Drupal\block\Entity\Block $block,
     } else {
         $block->unsetThirdPartySetting('inv_block_custom', 'block_margin');
     }
+    $responsive = $form_state->getValue('bootstrap_settings')['responsive'];
+    if ($responsive) {
+        $block->setThirdPartySetting('inv_block_custom', 'responsive', $responsive);
+    } else {
+        $block->unsetThirdPartySetting('inv_block_custom', 'responsive');
+    }
+
 }
 /**
  * Implements hook_preprocess_HOOK().
@@ -362,6 +372,7 @@ function inv_block_custom_preprocess_block(&$variables) {
           _set_video_background($block, $variables);
       }
 
+      _set_overlay_background($block, $variables);
       // Custom style block
       set_custom_style($block, $variables,$styles);
   }
@@ -404,20 +415,22 @@ function _set_image_background($block, &$variables, &$styles) {
                 $variables['#attached']['library'][] = 'inv_block_custom/innovation_parallax';
             }
         }
+    }
+}
 
-        $set_overlay = false;
-        if ($overlay_color = $block->getThirdPartySetting('inv_block_custom', 'overlay_color')) {
-            $overlay_style[] = "background-color:".$overlay_color;
-            $set_overlay = true;
-        }
-        if ($overlay_opacity = $block->getThirdPartySetting('inv_block_custom', 'overlay_opacity')) {
-            $overlay_style[] = "opacity:".$overlay_opacity;
-            $set_overlay = true;
-        }
-        if ( $set_overlay) {
-            $variables['overlay_style'] = implode(";", $overlay_style);
-            $variables['attributes']['class'][] = 'block-overlay';
-        }
+function _set_overlay_background($block, &$variables) {
+    $set_overlay = false;
+    if ($overlay_color = $block->getThirdPartySetting('inv_block_custom', 'overlay_color')) {
+        $overlay_style[] = "background-color:".$overlay_color;
+        $set_overlay = true;
+    }
+    if ($overlay_opacity = $block->getThirdPartySetting('inv_block_custom', 'overlay_opacity')) {
+        $overlay_style[] = "opacity:".$overlay_opacity;
+        $set_overlay = true;
+    }
+    if ( $set_overlay) {
+        $variables['overlay_style'] = implode(";", $overlay_style);
+        $variables['attributes']['class'][] = 'block-overlay';
     }
 }
 
@@ -440,6 +453,30 @@ function set_custom_style($block, &$variables, &$styles) {
     }
     if ($block_classes = $block->getThirdPartySetting('inv_block_custom', 'block_classes')) {
         $variables['attributes']['class'][] = $block_classes;
+    }
+    if ($responsive = $block->getThirdPartySetting('inv_block_custom', 'responsive')) {
+        if ($responsive['hphone']) {
+            $variables['attributes']['class'][] = 'hidden-xs';
+        }
+        if ($responsive['vphone']) {
+            $variables['attributes']['class'][] = 'visible-xs';
+        }
+        if ($responsive['htablet']) {
+            $variables['attributes']['class'][] = 'hidden-sm';
+        }
+        if ($responsive['vtablet']) {
+            $variables['attributes']['class'][] = 'visible-sm';
+        }
+        if ($responsive['hdesktop']) {
+            $variables['attributes']['class'][] = 'hidden-md';
+            $variables['attributes']['class'][] = 'hidden-lg';
+        }
+        if ($responsive['vdesktop']) {
+            $variables['attributes']['class'][] = 'visible-md';
+            $variables['attributes']['class'][] = 'visible-lg';
+        }
+
+        //$variables['attributes']['class'][] = $responsive;
     }
     if ($text_align = $block->getThirdPartySetting('inv_block_custom', 'block_text_align')) {
         $styles[] = 'text-align:' . $text_align;

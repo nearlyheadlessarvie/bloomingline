@@ -5,6 +5,5 @@ package: 'Innovation'
 
 core: '8.x'
 version: '8.x-0.0'
-project: 'Innovation build core theme'
 dependencies:
   - block
