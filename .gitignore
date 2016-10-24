@@ -48,6 +48,7 @@ core/*
 # Ignore user contributed modules/libraries/themes/sites
 sites/*
 modules/*
+!modules/responsive_menu
 libraries/*
 themes/*
 !themes/enar
