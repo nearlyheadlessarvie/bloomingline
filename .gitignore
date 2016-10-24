@@ -49,6 +49,8 @@ core/*
 sites/*
 modules/*
 !modules/responsive_menu
+!modules/enar_*
+!modules/inv_*
 libraries/*
 themes/*
 !themes/enar
