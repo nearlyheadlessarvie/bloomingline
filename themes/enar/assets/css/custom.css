@@ -1,0 +1,55 @@
+.js-form-type-checkbox label,.js-form-type-radio label  {
+	display:inline-block;
+}
+
+/* responsive menu override */
+.horizontal-menu > li > a {
+	color: #666666;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+.enar-responsivemenumobileicon {
+	float:right;
+}
+
+.enar-responsivemenumobileicon > .container {
+	padding:1.5px 0;
+}
+
+.responsive-menu-toggle-icon:before {
+	top: 12px;
+}
+
+.responsive-menu-toggle-icon span.icon {
+	top: 17px;
+}
+
+.responsive-menu-toggle-icon:after {	
+	top: 22px;
+}
+
+html.mm-opening .responsive-menu-toggle-icon:before,
+html.mm-opening .responsive-menu-toggle-icon:after {
+  top: 17px;
+}
+
+.responsive-menu-toggle-icon:before,
+.responsive-menu-toggle-icon:after,
+.responsive-menu-toggle-icon span.icon {
+  left: 8px;
+}
+
+.responsive-menu-toggle-icon {
+	width:35px;
+	height:35px;
+}
+
+.enar-responsivemenu {
+	padding:22px 20px;
+}
+
+/* search-block-form override */
+.search-block-form input[type='search'] {
+  padding: 0 0 0 40px;
+}
